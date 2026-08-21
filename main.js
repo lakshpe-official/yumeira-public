@@ -35,7 +35,7 @@ function startAutoPlay() {
 
   autoPlayTimer = setInterval(() => {
     nextSlide();
-  }, 4500);
+}, 2300);
 }
 
 function stopAutoPlay() {
@@ -156,5 +156,113 @@ if (featuredToggle && featuredImages.length === 4) {
     featuredToggle.textContent = showingSecondFeaturedGroup
       ? "戻る ←"
       : "すべて見る →";
+  });
+}
+// =========================
+// MINI SHOWCASE
+// 中间大图 + 两侧小图
+// =========================
+
+const miniShowcaseItems = document.querySelectorAll(
+  ".mini-showcase-item"
+);
+
+const miniShowcasePrev = document.querySelector(
+  ".mini-showcase-prev"
+);
+
+const miniShowcaseNext = document.querySelector(
+  ".mini-showcase-next"
+);
+
+let miniShowcaseIndex = 0;
+let miniShowcaseTimer = null;
+let miniShowcasePaused = false;
+
+function updateMiniShowcase() {
+  const total = miniShowcaseItems.length;
+
+  miniShowcaseItems.forEach((item) => {
+    item.classList.remove(
+      "is-active",
+      "is-prev",
+      "is-next",
+      "is-prev-2",
+      "is-next-2"
+    );
+  });
+
+  const activeIndex = miniShowcaseIndex;
+  const prevIndex = (activeIndex - 1 + total) % total;
+  const nextIndex = (activeIndex + 1) % total;
+  const prev2Index = (activeIndex - 2 + total) % total;
+  const next2Index = (activeIndex + 2) % total;
+
+  miniShowcaseItems[activeIndex].classList.add("is-active");
+  miniShowcaseItems[prevIndex].classList.add("is-prev");
+  miniShowcaseItems[nextIndex].classList.add("is-next");
+  miniShowcaseItems[prev2Index].classList.add("is-prev-2");
+  miniShowcaseItems[next2Index].classList.add("is-next-2");
+}
+
+function nextMiniShowcase() {
+  miniShowcaseIndex =
+    (miniShowcaseIndex + 1) % miniShowcaseItems.length;
+
+  updateMiniShowcase();
+}
+
+function previousMiniShowcase() {
+  miniShowcaseIndex =
+    (miniShowcaseIndex - 1 + miniShowcaseItems.length) %
+    miniShowcaseItems.length;
+
+  updateMiniShowcase();
+}
+
+function startMiniShowcase() {
+  stopMiniShowcase();
+
+  miniShowcaseTimer = setInterval(() => {
+    if (!miniShowcasePaused) {
+      nextMiniShowcase();
+    }
+  }, 2800);
+}
+
+function stopMiniShowcase() {
+  if (miniShowcaseTimer) {
+    clearInterval(miniShowcaseTimer);
+    miniShowcaseTimer = null;
+  }
+}
+
+if (miniShowcaseItems.length === 6) {
+  updateMiniShowcase();
+  startMiniShowcase();
+
+  miniShowcaseNext?.addEventListener("click", () => {
+    nextMiniShowcase();
+    startMiniShowcase();
+  });
+
+  miniShowcasePrev?.addEventListener("click", () => {
+    previousMiniShowcase();
+    startMiniShowcase();
+  });
+
+  miniShowcaseItems.forEach((item, index) => {
+    item.addEventListener("click", () => {
+      if (index === miniShowcaseIndex) {
+        miniShowcasePaused = !miniShowcasePaused;
+        return;
+      }
+
+      miniShowcaseIndex = index;
+      miniShowcasePaused = false;
+
+      updateMiniShowcase();
+      startMiniShowcase();
+    });
   });
 }
