@@ -208,3 +208,15 @@ if (miniShowcaseItems.length === 6) {
     });
   });
 }
+const apkDownloadButton = document.querySelector(".apk-download-btn");
+
+if (apkDownloadButton) {
+  apkDownloadButton.addEventListener("click", () => {
+    if (typeof gtag === "function") {
+      gtag("event", "android_apk_download_click", {
+        event_category: "conversion",
+        event_label: "B_page_APK_download"
+      });
+    }
+  });
+}
